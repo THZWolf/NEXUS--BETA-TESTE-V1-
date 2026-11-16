@@ -1,0 +1,26 @@
+[Unit]
+Description=Open Eye optional local dashboard service
+After=nexus-server.service
+Wants=nexus-server.service
+ConditionPathExists=/var/lib/nexus-os/godseye/server/index.mjs
+ConditionPathExists=/var/lib/nexus-os/godseye/dist/index.html
+
+[Service]
+Type=simple
+User=nexus-svc
+Group=nexus-svc
+WorkingDirectory=/var/lib/nexus-os/godseye
+Environment=HOST=127.0.0.1
+Environment=PORT=3001
+ExecStart=/usr/bin/node /var/lib/nexus-os/godseye/server/index.mjs
+Restart=on-failure
+RestartSec=5s
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/nexus-os/godseye
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target

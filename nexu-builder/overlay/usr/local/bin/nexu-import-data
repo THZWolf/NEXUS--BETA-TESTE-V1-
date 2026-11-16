@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+cd /opt/nexus-os
+exec /usr/sbin/runuser -u nexus-svc -- /usr/bin/python3 -m core.web_importer "$@"

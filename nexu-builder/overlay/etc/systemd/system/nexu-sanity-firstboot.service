@@ -1,0 +1,14 @@
+[Unit]
+Description=NEXU-OS first-boot sanity checks
+After=multi-user.target docker.service nexus-server.service
+Wants=docker.service nexus-server.service
+ConditionFirstBoot=yes
+
+[Service]
+Type=oneshot
+ExecStart=/opt/nexus-os/sanity-test.sh
+StandardOutput=journal+console
+StandardError=journal+console
+
+[Install]
+WantedBy=multi-user.target

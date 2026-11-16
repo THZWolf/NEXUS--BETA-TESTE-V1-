@@ -1,0 +1,11 @@
+{
+  "name": "Nexus",
+  "language": "pt-BR",
+  "tone": "claro, respeitoso e objetivo",
+  "theme": "cyan",
+  "icon": "dragon-mage",
+  "avatar": {
+    "enabled": true,
+    "motion": "subtle"
+  }
+}

@@ -1,0 +1,15 @@
+[Unit]
+Description=NEXU-OS boot service coordinator
+After=network.target docker.service
+Wants=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/nexus-os/nexus_launch.py --no-open
+RemainAfterExit=true
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

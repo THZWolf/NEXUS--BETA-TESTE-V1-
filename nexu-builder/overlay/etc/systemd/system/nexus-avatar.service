@@ -1,0 +1,24 @@
+[Unit]
+Description=NEXU-OS local avatar interface
+After=nexus-server.service
+Requires=nexus-server.service
+ConditionPathExists=/opt/nexus-os/ai/avatar_core.py
+
+[Service]
+Type=simple
+User=nexus-svc
+Group=nexus-svc
+WorkingDirectory=/opt/nexus-os
+Environment=NEXUS_PERSONALITY_FILE=/etc/nexus-os/personality.json
+ExecStart=/usr/bin/python3 -m ai.avatar_core
+Restart=on-failure
+RestartSec=3s
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

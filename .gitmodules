@@ -1,0 +1,6 @@
+[submodule "third_party/OpenJarvis"]
+	path = third_party/OpenJarvis
+	url = https://github.com/open-jarvis/OpenJarvis.git
+[submodule "third_party/godseye"]
+	path = third_party/godseye
+	url = https://github.com/VrushankPatel/godseye.git

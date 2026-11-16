@@ -1,0 +1,30 @@
+#!/bin/sh
+set -eu
+
+if ! getent passwd nexus-svc >/dev/null; then
+    useradd --system --home-dir /var/lib/nexus-os --create-home \
+        --shell /usr/sbin/nologin nexus-svc
+fi
+if ! getent passwd openjarvis >/dev/null; then
+    useradd --system --home-dir /opt/openjarvis --create-home \
+        --shell /usr/sbin/nologin openjarvis
+fi
+install -d -o nexus-svc -g nexus-svc -m 0750 /var/lib/nexus-os
+install -d -o nexus-svc -g nexus-svc -m 0750 \
+    /var/lib/nexus-os/import/inbox /var/lib/nexus-os/imported
+if [ -d /usr/share/nexus-os/godseye/server ] && [ -d /usr/share/nexus-os/godseye/dist ]; then
+    install -d -o nexus-svc -g nexus-svc -m 0750 /var/lib/nexus-os/godseye
+    cp -a /usr/share/nexus-os/godseye/server /var/lib/nexus-os/godseye/
+    cp -a /usr/share/nexus-os/godseye/dist /var/lib/nexus-os/godseye/
+    chown -R nexus-svc:nexus-svc /var/lib/nexus-os/godseye
+fi
+install -d -m 0755 /etc/nexus-os /etc/systemd/system/docker.service.d
+install -d -m 0755 /etc/systemd/system/postgresql.service.d
+systemctl --root=/ enable docker.service postgresql.service nexus-launch.service \
+    nexu-status-boot.service nexu-sanity-firstboot.service nexus-docker-cleanup.timer
+if python3 -c 'import json; import sys; sys.exit(0 if "open-eye" in json.load(open("/etc/nexus-os/build-profile.json")).get("packages", []) else 1)' 2>/dev/null; then
+    systemctl --root=/ enable open-eye.service
+fi
+if python3 -c 'import json; import sys; sys.exit(0 if "open-jarvis" in json.load(open("/etc/nexus-os/build-profile.json")).get("packages", []) else 1)' 2>/dev/null; then
+    systemctl --root=/ enable open-jarvis.service
+fi

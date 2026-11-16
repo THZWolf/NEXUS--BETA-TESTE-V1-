@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=NEXU Avatar
+Comment=Open the local NEXU-OS avatar interface
+Exec=/usr/local/bin/nexu-avatar
+Icon=nexus-dragon-mage
+Terminal=false
+Categories=Utility;

@@ -1,0 +1,5 @@
+Version: 2026.11
+Build time (UTC): 2026-11-16T04:22:23Z
+Artifact: NexusDesktopOS-Security-2026.11-amd64.hybrid.iso
+Architecture: amd64
+SHA-256: 5c922e8178d14bf81de94e0d98d1e74349aed088ad42309c6ddc89eceecd5258

@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1118">
+  <meta name="description" content="Central informativa de proteção, detecção, resposta, recuperação e privacidade do Nexus OS.">
+  <title>Central de Segurança · Nexus OS</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1118;
+      --surface: #111a23;
+      --surface-raised: #16222d;
+      --surface-soft: #0e171f;
+      --line: #293846;
+      --line-bright: #385064;
+      --text: #edf4f5;
+      --muted: #9aadb8;
+      --quiet: #728794;
+      --mint: #8ce2c4;
+      --cyan: #8ed8e2;
+      --amber: #f0c27e;
+      --red: #f18d8d;
+      --radius: 14px;
+      --mono: ui-monospace, "Cascadia Code", "Segoe UI Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(ellipse at 70% -28%, #183844 0, transparent 44%),
+        linear-gradient(145deg, #0d141b 0%, var(--bg) 62%);
+      color: var(--text);
+      font: 15px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    button, input, textarea { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible, a:focus-visible {
+      outline: 2px solid var(--mint);
+      outline-offset: 3px;
+    }
+    .skip-link {
+      position: absolute;
+      left: 16px;
+      top: -52px;
+      z-index: 20;
+      padding: 10px 14px;
+      border: 1px solid #5f8a80;
+      border-radius: 9px;
+      background: rgba(11, 17, 24, 0.96);
+      color: var(--text);
+      text-decoration: none;
+      font: 11px var(--mono);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: top .18s ease;
+    }
+    .skip-link:focus, .skip-link:focus-visible {
+      top: 16px;
+    }
+    .mono { font-family: var(--mono); }
+
+    .topbar {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 0 28px;
+      border-bottom: 1px solid #ffffff12;
+      background: #091018d9;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-size: 12px; font-weight: 760; letter-spacing: .13em; }
+    .brand-mark {
+      width: 29px; height: 29px; display: grid; place-items: center;
+      border: 1px solid #47736f; border-radius: 9px;
+      background: #142d2c; color: var(--mint); font-size: 14px;
+    }
+    .brand b { color: var(--mint); }
+    .top-meta { display: flex; align-items: center; gap: 20px; color: var(--muted); font: 10px var(--mono); letter-spacing: .035em; }
+    .local-mark { display: inline-flex; align-items: center; gap: 8px; color: #b7e9d8; }
+    .local-mark::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 12px #8ce2c455; }
+
+    .app-shell { display: grid; grid-template-columns: 238px minmax(0, 1fr); min-height: calc(100vh - 58px); max-width: 1680px; margin: 0 auto; }
+    .rail {
+      display: flex; flex-direction: column; gap: 24px;
+      padding: 26px 15px 20px;
+      border-right: 1px solid #ffffff12;
+      background: #0a1118a8;
+    }
+    .rail-heading { margin: 0 10px 9px; color: var(--quiet); font: 10px var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+    .nav-list { display: grid; gap: 4px; }
+    .nav-button {
+      width: 100%; display: flex; align-items: center; gap: 11px;
+      padding: 10px 11px; border: 1px solid transparent; border-radius: 9px;
+      background: transparent; color: #aebdc5; text-align: left; cursor: pointer;
+      transition: background-color .16s ease, border-color .16s ease, color .16s ease;
+    }
+    .nav-button:hover { border-color: #ffffff10; background: #ffffff08; color: var(--text); }
+    .nav-button[aria-current="page"] { border-color: #3d625c; background: linear-gradient(100deg, #18332e, #16232b); color: #e6fff6; }
+    .nav-icon {
+      width: 29px; height: 29px; flex: 0 0 29px; display: grid; place-items: center;
+      border: 1px solid #304451; border-radius: 8px; background: #17232c; color: var(--cyan);
+      font: 11px var(--mono);
+    }
+    .nav-button[aria-current="page"] .nav-icon { border-color: #47766c; background: #20433b; color: var(--mint); }
+    .nav-copy { min-width: 0; }
+    .nav-copy strong { display: block; font-size: 12px; font-weight: 650; }
+    .nav-copy small { display: block; margin-top: 1px; color: var(--quiet); font-size: 10px; }
+    .rail-note { margin-top: auto; padding: 14px 12px; border: 1px solid #2c4148; border-radius: 11px; background: #101b21; }
+    .rail-note strong { display: block; color: var(--mint); font: 10px var(--mono); letter-spacing: .08em; }
+    .rail-note p { margin: 7px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+
+    main { min-width: 0; padding: 31px clamp(20px, 3.2vw, 52px) 48px; }
+    .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 22px; margin-bottom: 22px; }
+    .eyebrow { color: var(--cyan); font: 10px var(--mono); letter-spacing: .13em; text-transform: uppercase; }
+    h1 { margin: 7px 0 5px; font-size: clamp(26px, 3vw, 37px); font-weight: 640; letter-spacing: -.045em; line-height: 1.12; }
+    .page-intro { max-width: 700px; margin: 0; color: #a9bac2; font-size: 14px; }
+    .search-wrap { position: relative; width: min(295px, 33vw); flex: 0 0 auto; }
+    .search-wrap::before { content: "⌕"; position: absolute; top: 8px; left: 13px; color: #9db1ba; font-size: 19px; line-height: 1; pointer-events: none; }
+    .search-wrap input {
+      width: 100%; height: 40px; padding: 0 13px 0 37px;
+      border: 1px solid #304252; border-radius: 9px; background: #101923; color: var(--text);
+    }
+    .search-wrap input::placeholder { color: #80939f; }
+
+    .overview-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(250px, .75fr); gap: 13px; margin: 23px 0 25px; }
+    .posture-panel, .assurance-panel { position: relative; overflow: hidden; border: 1px solid #34504f; border-radius: var(--radius); }
+    .posture-panel {
+      min-height: 202px; padding: 21px 23px;
+      background:
+        radial-gradient(circle at 87% 35%, #24695d55 0, transparent 28%),
+        linear-gradient(115deg, #15332f, #15252c 58%, #182631);
+    }
+    .posture-panel::after { content: ""; position: absolute; top: -95px; right: -44px; width: 250px; height: 250px; border: 1px solid #9de7d022; border-radius: 50%; box-shadow: 0 0 0 25px #9de7d00b, 0 0 0 54px #9de7d008; pointer-events: none; }
+    .panel-label { display: flex; align-items: center; gap: 8px; color: #b8e9dc; font: 10px var(--mono); letter-spacing: .09em; text-transform: uppercase; }
+    .panel-label::before { content: ""; width: 6px; height: 6px; border: 1px solid var(--mint); transform: rotate(45deg); }
+    .posture-panel h2 { position: relative; z-index: 1; max-width: 490px; margin: 15px 0 8px; font-size: clamp(19px, 2.2vw, 25px); font-weight: 620; letter-spacing: -.025em; line-height: 1.23; }
+    .posture-panel p { position: relative; z-index: 1; max-width: 590px; margin: 0; color: #bed0d0; font-size: 13px; }
+    .layer-list { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 7px; margin-top: 19px; }
+    .layer-list span { padding: 5px 8px; border: 1px solid #92dfc526; border-radius: 5px; color: #d3eee4; background: #10272375; font: 9px var(--mono); }
+    .assurance-panel { padding: 18px 19px; border-color: #39434b; background: linear-gradient(145deg, #18212a, #111a23); }
+    .assurance-panel .panel-label { color: var(--amber); }
+    .assurance-panel .panel-label::before { border-color: var(--amber); }
+    .assurance-panel h2 { margin: 12px 0 5px; font-size: 14px; font-weight: 650; }
+    .assurance-panel p { margin: 0; color: #a9b8c0; font-size: 12px; }
+    .assurance-panel .assurance-foot { margin-top: 12px; padding-top: 10px; border-top: 1px solid #ffffff12; color: #d4c49f; font: 10px/1.5 var(--mono); }
+
+    .section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 26px 1px 11px; }
+    .section-heading h2 { margin: 0; font-size: 15px; font-weight: 650; letter-spacing: -.01em; }
+    .section-heading span { color: var(--quiet); font: 9px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .group-intro { margin: -4px 1px 12px; color: var(--muted); font-size: 11px; }
+    .module-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .module-card { min-width: 0; border: 1px solid #2c3b47; border-radius: 11px; background: linear-gradient(145deg, #151f29, #111922); transition: border-color .16s ease, transform .16s ease; }
+    .module-card:hover { border-color: #46645f; transform: translateY(-1px); }
+    .module-card[open] { border-color: #41675f; background: #15212a; }
+    .module-card summary { display: grid; grid-template-columns: 34px minmax(0, 1fr) 14px; align-items: start; gap: 10px; padding: 13px; cursor: pointer; list-style: none; }
+    .module-card summary::-webkit-details-marker { display: none; }
+    .module-card summary::after { content: "+"; color: #91a5af; font: 17px/1 var(--mono); text-align: center; }
+    .module-card[open] summary::after { content: "−"; color: var(--mint); }
+    .module-icon { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid #344d59; border-radius: 9px; background: #1b2b35; color: var(--cyan); font: 10px var(--mono); }
+    .module-title { display: block; margin: 1px 0 3px; color: #e8f0f1; font-size: 12px; font-weight: 650; line-height: 1.35; }
+    .module-summary { display: block; color: #9aadb7; font-size: 10px; line-height: 1.45; }
+    .module-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin: 0 13px 12px 57px; }
+    .badge { display: inline-flex; align-items: center; min-height: 19px; padding: 2px 6px; border: 1px solid #385951; border-radius: 4px; background: #142822; color: #b6e8d5; font: 8px var(--mono); letter-spacing: .035em; text-transform: uppercase; }
+    .badge.optional { border-color: #66573a; background: #282317; color: #f0cf91; }
+    .badge.info { border-color: #3d5365; background: #182531; color: #b6cddd; }
+    .module-detail { margin: 0 13px 14px 57px; padding-top: 10px; border-top: 1px solid #ffffff12; color: #b5c3c9; font-size: 11px; }
+    .module-detail p { margin: 0 0 7px; }
+    .module-detail p:last-child { margin-bottom: 0; }
+    .module-detail strong { color: #dce8e7; font-weight: 600; }
+    .scope-note { padding: 11px 13px; border-left: 2px solid #c69a55; background: #211d17; color: #d9c8a9; font-size: 11px; }
+    .pillars { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; margin: 16px 0 21px; }
+    .pillar { position: relative; min-height: 112px; padding: 13px 13px 12px; border: 1px solid #2d3d48; border-radius: 10px; background: #111a23; }
+    .pillar::before { content: attr(data-step); display: block; margin-bottom: 14px; color: var(--mint); font: 9px var(--mono); letter-spacing: .08em; }
+    .pillar strong { display: block; font-size: 12px; font-weight: 620; }
+    .pillar span { display: block; margin-top: 4px; color: #94a8b2; font-size: 10px; line-height: 1.45; }
+
+    .response-layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr); gap: 13px; }
+    .checklist, .notes-panel { border: 1px solid #2d3e49; border-radius: 12px; background: #121b24; }
+    .checklist { padding: 16px 17px; }
+    .checklist h2, .notes-panel h2 { margin: 0 0 5px; font-size: 14px; }
+    .checklist > p, .notes-panel > p { margin: 0 0 13px; color: var(--muted); font-size: 11px; }
+    .check-items { display: grid; gap: 8px; }
+    .check-item { display: flex; align-items: flex-start; gap: 10px; padding: 9px; border: 1px solid #293945; border-radius: 8px; background: #0f1820; color: #bfccd0; font-size: 11px; cursor: pointer; }
+    .check-item input { width: 15px; height: 15px; flex: 0 0 auto; margin: 1px 0 0; accent-color: #76c9aa; }
+    .check-item:has(input:checked) { border-color: #3f695b; background: #14251f; color: #d4e8dd; }
+    .notes-panel { padding: 16px 17px; }
+    .notes-panel textarea { width: 100%; min-height: 158px; resize: vertical; padding: 10px 11px; border: 1px solid #344653; border-radius: 8px; background: #0c141c; color: var(--text); font-size: 12px; }
+    .notes-actions { display: flex; align-items: center; justify-content: space-between; gap: 9px; margin-top: 9px; }
+    .notes-status { min-height: 18px; color: #8dbdab; font: 9px var(--mono); }
+    .small-button { padding: 7px 10px; border: 1px solid #426256; border-radius: 7px; background: #193027; color: #d7f0e2; font-size: 10px; cursor: pointer; }
+    .small-button:hover { border-color: var(--mint); background: #204032; }
+    .small-button.secondary { border-color: #394954; background: #18222b; color: #c3d0d5; }
+    .small-button.secondary:hover { border-color: #70838c; }
+    .note-caution { margin-top: 10px !important; color: #d6bd8b !important; font-size: 10px !important; }
+    .empty-state { padding: 28px 20px; border: 1px dashed #3b4e5b; border-radius: 11px; color: #a9bac2; background: #101922; text-align: center; }
+    .empty-state strong { display: block; margin-bottom: 5px; color: #e1eaeb; font-size: 13px; }
+    .empty-state p { margin: 0; font-size: 11px; }
+    .page-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 34px; padding-top: 13px; border-top: 1px solid #ffffff12; color: #7f929d; font: 9px var(--mono); }
+    .page-foot strong { color: #a8dcca; font-weight: 500; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
+
+    @media (max-width: 1120px) {
+      .module-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 768px) {
+      .topbar { min-height: 52px; padding: 0 15px; }
+      .top-meta { gap: 10px; font-size: 9px; }
+      .top-meta .platform { display: none; }
+      .app-shell { display: block; min-height: calc(100vh - 52px); }
+      .rail {
+        position: sticky; z-index: 5; top: 0; display: block;
+        padding: 7px 8px; border-right: 0; border-bottom: 1px solid #ffffff16;
+        background: #0b121af2; backdrop-filter: blur(12px);
+      }
+      .rail-heading, .rail-note { display: none; }
+      .nav-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
+      .nav-button { width: auto; flex: 0 0 auto; gap: 7px; padding: 6px 8px; }
+      .nav-icon { width: 25px; height: 25px; flex-basis: 25px; font-size: 9px; }
+      .nav-copy strong { font-size: 10px; white-space: nowrap; }
+      .nav-copy small { display: none; }
+      main { padding: 24px 16px 32px; }
+      .page-head { display: block; }
+      .search-wrap { width: 100%; margin-top: 14px; }
+      .overview-grid { grid-template-columns: 1fr; margin-top: 17px; }
+      .posture-panel { min-height: 190px; }
+      .response-layout { grid-template-columns: 1fr; }
+      .page-foot { flex-direction: column; }
+    }
+    @media (max-width: 500px) {
+      .top-meta .local-mark { font-size: 0; gap: 0; }
+      .top-meta .local-mark::before { width: 8px; height: 8px; }
+      .brand { font-size: 10px; }
+      .brand-mark { width: 26px; height: 26px; }
+      .module-grid { grid-template-columns: 1fr; }
+      .pillars { grid-template-columns: 1fr 1fr; gap: 7px; }
+      .pillar { min-height: 105px; padding: 11px; }
+      .layer-list { gap: 5px; }
+      .layer-list span { font-size: 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Pular para o conte?do</a>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">N</span><span>NEXUS <b>DESKTOPOS</b></span></div>
+    <div class="top-meta"><span class="platform">DEBIAN · XFCE</span><span class="local-mark">LOCAL-FIRST · SEM TELEMETRIA</span></div>
+  </header>
+
+  <div class="app-shell">
+    <aside class="rail" aria-label="Navegação da Central de Segurança">
+      <div>
+        <p class="rail-heading">Segurança defensiva</p>
+        <nav class="nav-list" aria-label="Seções">
+          <button class="nav-button" type="button" data-view="overview" aria-current="page"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-copy"><strong>Visão geral</strong><small>Postura informativa</small></span></button>
+          <button class="nav-button" type="button" data-view="protect"><span class="nav-icon" aria-hidden="true">01</span><span class="nav-copy"><strong>Proteger</strong><small>Controles locais</small></span></button>
+          <button class="nav-button" type="button" data-view="detect"><span class="nav-icon" aria-hidden="true">02</span><span class="nav-copy"><strong>Detectar</strong><small>Observação e análise</small></span></button>
+          <button class="nav-button" type="button" data-view="respond"><span class="nav-icon" aria-hidden="true">03</span><span class="nav-copy"><strong>Responder</strong><small>Triagem segura</small></span></button>
+          <button class="nav-button" type="button" data-view="recover"><span class="nav-icon" aria-hidden="true">04</span><span class="nav-copy"><strong>Recuperar / Forense</strong><small>Preservar e restaurar</small></span></button>
+          <button class="nav-button" type="button" data-view="privacy"><span class="nav-icon" aria-hidden="true">05</span><span class="nav-copy"><strong>Privacidade</strong><small>Limites e escolhas</small></span></button>
+          <button class="nav-button" type="button" data-view="nexus"><span class="nav-icon" aria-hidden="true">NX</span><span class="nav-copy"><strong>Módulos Nexus</strong><small>Recursos do ambiente</small></span></button>
+          <button class="nav-button" type="button" data-view="jarvis"><span class="nav-icon" aria-hidden="true">OJ</span><span class="nav-copy"><strong>OpenJarvis</strong><small>Chat local opcional</small></span></button>
+        </nav>
+      </div>
+      <div class="rail-note"><strong>◇ LOCAL POR PADRÃO</strong><p>Esta interface não envia telemetria nem executa verificações. Os cartões são referências, não um diagnóstico do dispositivo.</p></div>
+    </aside>
+
+    <main id="main-content">
+      <header class="page-head">
+        <div>
+          <div class="eyebrow" id="eyebrow">Nexus OS / Centro de Segurança</div>
+          <h1 id="page-title">Segurança com contexto.</h1>
+          <p class="page-intro" id="page-intro">Uma visão local e informativa para organizar proteção, observação e recuperação — sem afirmar que verificações foram executadas.</p>
+        </div>
+        <label class="search-wrap"><span class="sr-only">Buscar módulos nesta seção</span><input id="search" type="search" placeholder="Buscar módulos nesta seção…" autocomplete="off"></label>
+      </header>
+
+      <div id="view-content" aria-live="polite"></div>
+      <footer class="page-foot"><span><strong>NEXUS · CENTRAL DE SEGURANÇA</strong></span><span>INTERFACE INFORMATIVA · SEM AUDITORIA AO VIVO</span></footer>
+    </main>
+  </div>
+
+  <script>
+    const moduleGroups = {
+      protect: {
+        title: "Proteger",
+        intro: "Controles preventivos e ferramentas locais. A configuração correta depende do sistema e do perfil de uso.",
+        modules: [
+          { name: "AppArmor", icon: "AA", state: "included", summary: "Controle de acesso por perfil para limitar o que aplicações podem acessar.", detail: "Os perfis devem ser revisados para o uso pretendido. A presença do componente não confirma que um perfil específico esteja ativo ou aplicado.", category: "Proteção local" },
+          { name: "Firejail", icon: "FJ", state: "included", summary: "Isolamento opcional de aplicações em ambientes compatíveis.", detail: "Use perfis mantidos e adequados ao aplicativo. Esta página não inicia aplicações isoladas nem altera políticas.", category: "Isolamento" },
+          { name: "GPG + KeePassXC", icon: "GPG", state: "included", summary: "Criptografia de arquivos e armazenamento local de senhas.", detail: "Proteja suas chaves mestras e mantenha cópias de segurança cifradas. Nunca compartilhe senhas ou material secreto nesta interface.", category: "Dados e credenciais" },
+          { name: "Lynis", icon: "LY", state: "included", summary: "Referência para revisão de configuração e recomendações de hardening local.", detail: "Uma revisão precisa ser iniciada e interpretada por um administrador. Nenhuma auditoria é executada aqui e recomendações precisam de contexto.", category: "Revisão local" }
+        ]
+      },
+      detect: {
+        title: "Detectar",
+        intro: "Reúna contexto usando registros locais e observação passiva autorizada. Sensores e serviços não são iniciados por esta tela.",
+        modules: [
+          { name: "Suricata", icon: "SU", state: "included", summary: "Referência de análise de tráfego e regras de detecção.", detail: "Exige configuração explícita de interface, regras e permissões. A página não afirma que o serviço esteja ativo ou monitorando.", category: "Análise de tráfego" },
+          { name: "YARA", icon: "YR", state: "optional", summary: "Regras para classificar arquivos em uma análise controlada.", detail: "Use regras confiáveis e amostras obtidas de forma autorizada. A disponibilidade depende da instalação; nenhuma varredura é feita aqui.", category: "Análise de arquivos" },
+          { name: "ClamAV", icon: "AV", state: "optional", summary: "Antivírus local para inspeção sob demanda.", detail: "As definições e o serviço precisam de manutenção e configuração. Nenhum arquivo é lido, enviado ou verificado por esta interface.", category: "Verificação local" },
+          { name: "Wireshark + tcpdump", icon: "PC", state: "included", summary: "Observação e análise passiva de tráfego em interfaces autorizadas.", detail: "Capturas podem conter dados sensíveis. Obtenha autorização, limite a coleta ao necessário e armazene os arquivos com proteção adequada. Esta tela não captura pacotes.", category: "Observação passiva" },
+          { name: "Registros do sistema", icon: "LOG", state: "informational", summary: "Ponto de partida para revisar eventos e mudanças locais.", detail: "Correlacione horário, origem e contexto; preserve as fontes relevantes. Este painel não acessa logs nem produz alertas.", category: "Orientação" }
+        ]
+      },
+      recover: {
+        title: "Recuperar e preservar evidências",
+        intro: "Preservação vem antes da análise: mantenha a mídia original intacta e registre como cada cópia foi obtida.",
+        modules: [
+          { name: "Autopsy + Sleuth Kit", icon: "SK", state: "included", summary: "Referência para análise de sistemas de arquivos e evidências preservadas.", detail: "Trabalhe em cópias verificadas sempre que possível. Documente origem, horário, responsável e cada transferência de evidência.", category: "Forense" },
+          { name: "TestDisk", icon: "TD", state: "included", summary: "Utilitário de recuperação de partições e dados em mídia própria.", detail: "Operações de recuperação podem alterar a mídia. Não trabalhe diretamente no original quando a preservação for importante; procure orientação especializada.", category: "Recuperação" },
+          { name: "Binwalk", icon: "BW", state: "optional", summary: "Referência de inspeção de conteúdo em arquivos e imagens autorizados.", detail: "A disponibilidade depende da instalação. Preserve a amostra original e trate arquivos desconhecidos com precaução.", category: "Inspeção de arquivos" },
+          { name: "Cópia e cadeia de custódia", icon: "EVD", state: "informational", summary: "Registre origem, cópias, horários e pessoas que tiveram acesso.", detail: "Preserve o original, minimize manuseio e mantenha cópias protegidas. Se houver implicação legal ou organizacional, siga o procedimento formal aplicável.", category: "Boas práticas" }
+        ]
+      },
+      privacy: {
+        title: "Privacidade com limites claros",
+        intro: "Escolhas de rede e de aplicação podem reduzir exposição, mas nenhuma ferramenta isolada garante anonimato.",
+        modules: [
+          { name: "Tor", icon: "TR", state: "optional", summary: "Rede de encaminhamento voluntário, escolhida pelo usuário.", detail: "Tor não protege todo aplicativo automaticamente e não elimina riscos de identificação, configuração ou comportamento. Verifique as limitações do serviço usado.", category: "Rede" },
+          { name: "Proxy por aplicação", icon: "PX", state: "informational", summary: "Roteamento explícito para aplicações compatíveis, quando configurado.", detail: "Um proxy não é sinônimo de anonimato nem substitui controles de privacidade. Não há proxy ou túnel global ativado por esta interface.", category: "Configuração" },
+          { name: "GPG + KeePassXC", icon: "PG", state: "included", summary: "Proteção local de dados e gestão de senhas.", detail: "Use senhas mestras fortes e mantenha backups protegidos. Dados inseridos na área de notas de resposta ficam somente no armazenamento local deste navegador.", category: "Dados pessoais" }
+        ]
+      },
+      nexus: {
+        title: "Módulos Nexus",
+        intro: "Recursos do ambiente descritos para orientação. Esta página não abre serviços, inicia processos nem consulta o estado dos módulos.",
+        modules: [
+          { name: "Nexus Workspace", icon: "NW", state: "included", summary: "Hub local para informações e atalhos do ambiente Nexus.", detail: "A disponibilidade depende da edição instalada. O estado deste catálogo não é uma verificação do sistema.", category: "Ambiente" },
+          { name: "Godseye", icon: "GE", state: "informational", summary: "Módulo Nexus com visualização local e fontes configuráveis.", detail: "Feeds e fontes externas, se usados no módulo, podem ter requisitos próprios de rede. Este Security Center não os acessa.", category: "Módulo Nexus" },
+          { name: "Saturn Benchmark", icon: "SB", state: "informational", summary: "Módulo de avaliação de desempenho do computador.", detail: "Não é uma ferramenta de segurança nem é iniciado por esta página. Disponibilidade depende da edição.", category: "Módulo Nexus" }
+        ]
+      },
+      jarvis: {
+        title: "OpenJarvis · chat local opcional",
+        intro: "Uma experiência de conversa local, opcional e limitada a chat por padrão. Esta página não habilita execução de comandos ou ferramentas.",
+        modules: [
+          { name: "Chat local", icon: "OJ", state: "optional", summary: "Interação conversacional com modelo local escolhido pelo usuário.", detail: "OpenJarvis é opcional. A instalação e os modelos dependem de escolha explícita; downloads podem exigir conexão. O padrão descrito aqui é chat, sem ações de shell ou execução de ferramentas.", category: "Assistente local" },
+          { name: "Dados e privacidade", icon: "LOC", state: "informational", summary: "Prefira modelos e recursos que atendam às suas necessidades de privacidade.", detail: "Local-first não é uma garantia automática de privacidade. Confira configurações, origem dos modelos e armazenamento antes de inserir informações sensíveis.", category: "Orientação" }
+        ]
+      }
+    };
+
+    const labels = {
+      included: "Incluído na edição",
+      optional: "Opcional",
+      informational: "Informativo"
+    };
+    const views = {
+      overview: {
+        title: "Segurança com contexto.",
+        intro: "Uma visão local e informativa para organizar proteção, observação e recuperação — sem afirmar que verificações foram executadas."
+      },
+      ...Object.fromEntries(Object.entries(moduleGroups).map(([key, group]) => [key, { title: group.title, intro: group.intro }]))
+    };
+    const content = document.getElementById("view-content");
+    const search = document.getElementById("search");
+    const pageTitle = document.getElementById("page-title");
+    const pageIntro = document.getElementById("page-intro");
+    const eyebrow = document.getElementById("eyebrow");
+    let activeView = "overview";
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[character]);
+    }
+
+    function cardMarkup(module) {
+      return `<details class="module-card">
+        <summary><span class="module-icon" aria-hidden="true">${escapeHTML(module.icon)}</span><span><span class="module-title">${escapeHTML(module.name)}</span><span class="module-summary">${escapeHTML(module.summary)}</span></span></summary>
+        <div class="module-meta"><span class="badge ${module.state === "optional" ? "optional" : module.state === "informational" ? "info" : ""}">${labels[module.state]}</span><span class="mono" style="color:#81949e;font-size:8px">${escapeHTML(module.category)}</span></div>
+        <div class="module-detail"><p>${escapeHTML(module.detail)}</p><p><strong>Nota:</strong> o rótulo descreve o catálogo da edição, não confirma instalação, serviço ativo ou resultado de verificação neste dispositivo.</p></div>
+      </details>`;
+    }
+
+    function groupMarkup(title, intro, modules) {
+      return `<section aria-label="${escapeHTML(title)}"><div class="section-heading"><h2>${escapeHTML(title)}</h2><span>CATÁLOGO DEFENSIVO</span></div>${intro ? `<p class="group-intro">${escapeHTML(intro)}</p>` : ""}<div class="module-grid">${modules.map(cardMarkup).join("")}</div></section>`;
+    }
+
+    function overviewMarkup(query) {
+      const allModules = Object.entries(moduleGroups).flatMap(([key, group]) => group.modules.map(module => ({ ...module, group: key })));
+      const matches = query ? allModules.filter(module => Object.values(module).join(" ").toLocaleLowerCase("pt-BR").includes(query)) : [];
+      let html = `<section class="overview-grid" aria-label="Postura defensiva informativa">
+        <article class="posture-panel"><div class="panel-label">Painel informativo · sem telemetria</div><h2>Uma base defensiva começa por saber o que está — e o que não está — sendo verificado.</h2><p>Esta página organiza referências locais. Não consulta o sistema, não executa auditorias e não representa um estado de segurança em tempo real.</p><div class="layer-list"><span>PROTEGER</span><span>DETECTAR</span><span>RESPONDER</span><span>RECUPERAR</span></div></article>
+        <aside class="assurance-panel"><div class="panel-label">Modelo local-first</div><h2>Sem telemetria nesta interface</h2><p>Busca, navegação e anotações ficam no navegador. Nenhuma verificação, captura ou ação de sistema é iniciada por este painel.</p><div class="assurance-foot">STATUS DE SISTEMA: NÃO CONSULTADO</div></aside>
+      </section>
+      <div class="section-heading"><h2>Mapa de defesa</h2><span>ORIENTAÇÃO · NÃO É UMA AUDITORIA</span></div>
+      <div class="pillars">
+        <article class="pillar" data-step="01 / PREVENÇÃO"><strong>Proteger</strong><span>Revisar controles e cuidar de dados locais.</span></article>
+        <article class="pillar" data-step="02 / CONTEXTO"><strong>Detectar</strong><span>Observar registros e tráfego autorizado.</span></article>
+        <article class="pillar" data-step="03 / CUIDADO"><strong>Responder</strong><span>Registrar fatos e reduzir exposição com segurança.</span></article>
+        <article class="pillar" data-step="04 / CONTINUIDADE"><strong>Recuperar</strong><span>Preservar evidências e restaurar cópias confiáveis.</span></article>
+      </div>`;
+      if (query) {
+        html += matches.length
+          ? groupMarkup("Resultados da busca", `${matches.length} referência(s) correspondem a “${query}”.`, matches)
+          : `<div class="empty-state" role="status"><strong>Nenhum módulo encontrado</strong><p>Tente outro termo ou limpe a busca para voltar à visão geral.</p></div>`;
+      } else {
+        html += `<div class="section-heading"><h2>Orientações e módulos</h2><span>RÓTULOS NÃO VERIFICAM O DISPOSITIVO</span></div>
+          <div class="scope-note">“Incluído na edição”, “Opcional” e “Informativo” descrevem o catálogo. A presença de um pacote ou a execução de um serviço não é confirmada nesta tela.</div>`;
+        for (const key of ["protect", "detect", "recover"]) {
+          const group = moduleGroups[key];
+          html += groupMarkup(group.title, "", group.modules.slice(0, key === "detect" ? 3 : 2));
+        }
+      }
+      return html;
+    }
+
+    function responseMarkup(query) {
+      const checklist = [
+        "Registre o que observou, o horário aproximado e o contexto, sem alterar a evidência.",
+        "Se necessário, reduza a exposição do dispositivo de forma segura e siga o procedimento da sua organização.",
+        "Evite abrir arquivos suspeitos ou apagar registros; preserve os originais e anote qualquer ação tomada.",
+        "Procure suporte técnico de confiança. Se credenciais puderem estar expostas, altere-as usando outro dispositivo confiável.",
+        "Só restaure após avaliar a situação; escolha uma cópia de segurança conhecida e confiável."
+      ];
+      const checklistHTML = checklist.map((item, index) => `<label class="check-item"><input type="checkbox" data-check="${index}"><span>${item}</span></label>`).join("");
+      const noteHTML = `<section class="notes-panel"><h2>Anotações do incidente</h2><p>Registre fatos observáveis para organizar a triagem.</p><label class="sr-only" for="incident-notes">Anotações locais do incidente</label><textarea id="incident-notes" placeholder="Horário, observação e contexto — não inclua senhas ou segredos."></textarea><div class="notes-actions"><span class="notes-status" id="notes-status" role="status" aria-live="polite">Não salvo</span><div><button class="small-button secondary" type="button" id="clear-notes">Limpar</button> <button class="small-button" type="button" id="save-notes">Salvar localmente</button></div></div><p class="note-caution">As notas ficam somente neste navegador neste dispositivo. Não use como único registro de um incidente.</p></section>`;
+      if (query && !("triagem resposta incidente anotações checklist preservar fatos".includes(query))) {
+        return `<div class="empty-state" role="status"><strong>Nenhum conteúdo encontrado nesta seção</strong><p>Tente “triagem”, “incidente” ou limpe a busca.</p></div>`;
+      }
+      return `<div class="scope-note">Este roteiro é orientação geral e não substitui suporte especializado. Não há ações automáticas nesta página.</div><div class="section-heading"><h2>Triagem segura</h2><span>CHECKLIST MANUAL</span></div><div class="response-layout"><section class="checklist"><h2>Primeiros cuidados</h2><p>Marque os itens concluídos; o estado fica apenas nesta sessão da página.</p><div class="check-items">${checklistHTML}</div></section>${noteHTML}</div>`;
+    }
+
+    function render() {
+      const query = search.value.trim().toLocaleLowerCase("pt-BR");
+      const view = views[activeView];
+      pageTitle.textContent = view.title;
+      pageIntro.textContent = view.intro;
+      eyebrow.textContent = activeView === "overview" ? "Nexus OS / Centro de Segurança" : `Segurança defensiva / ${view.title}`;
+      if (activeView === "overview") {
+        content.innerHTML = overviewMarkup(query);
+      } else if (activeView === "respond") {
+        content.innerHTML = responseMarkup(query);
+        restoreNotes();
+        bindResponseControls();
+      } else {
+        const group = moduleGroups[activeView];
+        const modules = group.modules.filter(module => !query || Object.values(module).join(" ").toLocaleLowerCase("pt-BR").includes(query));
+        content.innerHTML = modules.length
+          ? groupMarkup(group.title, group.intro, modules)
+          : `<div class="empty-state" role="status"><strong>Nenhum módulo encontrado nesta seção</strong><p>Tente outro termo ou limpe a busca para ver o catálogo completo desta seção.</p></div>`;
+      }
+    }
+
+    function restoreNotes() {
+      const notes = document.getElementById("incident-notes");
+      if (!notes) return;
+      try {
+        notes.value = localStorage.getItem("nexus-security-center-notes") || "";
+        document.getElementById("notes-status").textContent = notes.value ? "Rascunho local carregado" : "Não salvo";
+      } catch {
+        document.getElementById("notes-status").textContent = "Armazenamento local indisponível";
+      }
+    }
+
+    function bindResponseControls() {
+      const save = document.getElementById("save-notes");
+      const clear = document.getElementById("clear-notes");
+      save.addEventListener("click", () => {
+        try {
+          localStorage.setItem("nexus-security-center-notes", document.getElementById("incident-notes").value);
+          document.getElementById("notes-status").textContent = "Salvo neste navegador";
+        } catch {
+          document.getElementById("notes-status").textContent = "Não foi possível salvar";
+        }
+      });
+      clear.addEventListener("click", () => {
+        document.getElementById("incident-notes").value = "";
+        try { localStorage.removeItem("nexus-security-center-notes"); } catch {}
+        document.getElementById("notes-status").textContent = "Notas limpas";
+      });
+    }
+
+    document.querySelectorAll("[data-view]").forEach(button => {
+      button.addEventListener("click", () => {
+        activeView = button.dataset.view;
+        document.querySelectorAll("[data-view]").forEach(item => {
+          if (item === button) item.setAttribute("aria-current", "page");
+          else item.removeAttribute("aria-current");
+        });
+        search.value = "";
+        render();
+        document.getElementById("main-content").scrollIntoView({ block: "start" });
+      });
+    });
+    search.addEventListener("input", render);
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+cd /opt/nexus-os
+exec /usr/bin/python3 -m ui.installer_wizard "$@"

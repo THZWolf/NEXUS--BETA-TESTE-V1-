@@ -1,0 +1,22 @@
+# Debian live-build output and transient state
+.binary
+.cache
+.chroot
+.config
+.build
+.tmp
+/binary
+/cache
+/chroot
+config/binary
+config/bootstrap
+config/chroot
+config/common
+config/source
+*.iso
+*.iso.sha256
+*.iso.sha512
+*.contents
+*.packages
+*.manifest
+*.log

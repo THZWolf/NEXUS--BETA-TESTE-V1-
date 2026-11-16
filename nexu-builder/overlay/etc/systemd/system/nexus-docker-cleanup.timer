@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Nexus Docker maintenance weekly
+
+[Timer]
+OnCalendar=weekly
+Persistent=true
+RandomizedDelaySec=1h
+Unit=nexus-docker-cleanup.service
+
+[Install]
+WantedBy=timers.target

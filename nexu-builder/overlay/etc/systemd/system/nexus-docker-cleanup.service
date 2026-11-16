@@ -1,0 +1,13 @@
+[Unit]
+Description=Weekly safe cleanup of eligible Docker resources
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/nexus-os/cleanup-docker.sh
+Nice=10
+IOSchedulingClass=idle
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true

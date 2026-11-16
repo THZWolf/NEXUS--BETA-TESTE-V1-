@@ -1,0 +1,62 @@
+name: Test NEXU-OS ISO
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-boot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Checkout build inputs
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          submodules: recursive
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /.gitmodules
+            /.gitattributes
+            /.github/workflows/test-iso.yml
+            /iso/build.sh
+            /iso/VERSION
+            /iso/.gitignore
+            /iso/auto/config
+            /iso/config/
+            /nexus-os/
+            /nexu-builder/
+            /scripts/install-openjarvis.sh
+            /sat_bench.py
+            /third_party/OpenJarvis/
+            /third_party/godseye/
+
+      - name: Install build and QEMU dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y debootstrap debian-archive-keyring git live-build nodejs npm perl \
+            qemu-system-x86 squashfs-tools xorriso
+
+      - name: Run focused importer tests
+        run: python3 -m unittest discover -s nexu-builder/tests -v
+
+      - name: Build ISO
+        run: sudo sh ./nexu-builder/build-iso.sh
+
+      - name: Boot ISO headlessly
+        run: sudo sh ./nexu-builder/test-iso-headless.sh iso/NexusDesktopOS-Security-2026.11-amd64.hybrid.iso
+
+      - name: Upload ISO and checksum
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexu-os-amd64-iso
+          path: |
+            iso/NexusDesktopOS-Security-2026.11-amd64.hybrid.iso
+            iso/NexusDesktopOS-Security-2026.11-amd64.hybrid.iso.sha256
+            iso/NexusDesktopOS-Security-2026.11-BUILD.txt
+          if-no-files-found: warn

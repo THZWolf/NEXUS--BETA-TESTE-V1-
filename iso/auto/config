@@ -1,0 +1,19 @@
+#!/bin/sh
+# Debian Live configuration; see https://live-team.pages.debian.net/live-manual/
+set -eu
+
+lb config noauto \
+  --distribution trixie \
+  --architectures amd64 \
+  --archive-areas "main contrib non-free non-free-firmware" \
+  --binary-images iso-hybrid \
+  --debian-installer live \
+  --bootappend-live "boot=live components username=nexus hostname=nexus locales=pt_BR.UTF-8 keyboard-layouts=br" \
+  --firmware-chroot false \
+  --firmware-binary false \
+  --security false \
+  --apt-recommends false \
+  --apt-options "--yes -oAcquire::Retries=3" \
+  --iso-application "NexusDesktopOS Security Edition" \
+  --iso-publisher "NexusDesktopOS community project" \
+  --iso-volume "NEXUS_DESKTOPOS_SEC"

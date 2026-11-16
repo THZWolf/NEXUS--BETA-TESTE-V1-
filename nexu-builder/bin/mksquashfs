@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+REAL_MKSQUASHFS=${NEXU_REAL_MKSQUASHFS:-/usr/bin/mksquashfs}
+
+for argument in "$@"; do
+    case "$argument" in
+        -help|-version)
+            exec "$REAL_MKSQUASHFS" "$@"
+            ;;
+    esac
+done
+
+exec "$REAL_MKSQUASHFS" "$@" \
+    -comp zstd \
+    -Xcompression-level 19 \
+    -b 1M

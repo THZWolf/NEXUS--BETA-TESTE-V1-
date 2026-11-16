@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Install OpenJarvis Chat
+Comment=Install the official local chat-only OpenJarvis setup
+Exec=/usr/local/bin/nexus-openjarvis-install
+Icon=utilities-terminal
+Terminal=true
+Categories=Utility;

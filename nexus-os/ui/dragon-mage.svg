@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Nexus Dragon Mage</title>
+  <defs>
+    <linearGradient id="a" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#75f4ff"/>
+      <stop offset="1" stop-color="#7657d8"/>
+    </linearGradient>
+  </defs>
+  <path fill="#07121d" d="M64 4a60 60 0 1 0 0 120A60 60 0 0 0 64 4Z"/>
+  <path fill="url(#a)" d="m64 17 10 18 24-11-8 22 20 9-21 8 6 24-20-13-11 24-9-24-21 13 7-24-22-8 21-9-9-22 24 11z"/>
+  <path fill="#07121d" d="m62 48 10 13-9 4 7 11-17-10 8-5-8-4z"/>
+  <path fill="#fff" d="m59 53 5 3-5 2z"/>
+  <circle cx="64" cy="64" r="52" fill="none" stroke="#75f4ff" stroke-opacity=".6" stroke-width="2"/>
+</svg>

@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+
+if ! command -v jarvis >/dev/null 2>&1 && [ -x "$HOME/.local/bin/jarvis" ]; then
+    PATH="$HOME/.local/bin:$PATH"
+    export PATH
+fi
+
+if ! command -v jarvis >/dev/null 2>&1; then
+    echo "OpenJarvis is not installed. Use Install OpenJarvis Chat from Applications first." >&2
+    exit 1
+fi
+
+exec jarvis

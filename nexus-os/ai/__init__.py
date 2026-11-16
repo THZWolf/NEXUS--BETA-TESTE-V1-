@@ -1,0 +1,1 @@
+"""Local avatar interface components."""

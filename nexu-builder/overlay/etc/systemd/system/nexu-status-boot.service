@@ -1,0 +1,12 @@
+[Unit]
+Description=NEXU-OS boot status summary
+After=multi-user.target docker.service nexus-server.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/nexu-status.sh
+StandardOutput=journal+console
+StandardError=journal+console
+
+[Install]
+WantedBy=multi-user.target

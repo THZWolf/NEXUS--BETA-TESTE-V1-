@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <radialGradient id="bg" cx="52%" cy="44%" r="75%"><stop stop-color="#142b3a"/><stop offset=".58" stop-color="#0b111a"/><stop offset="1" stop-color="#070a10"/></radialGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#27d9bd"/><stop offset=".48" stop-color="#2789c4"/><stop offset="1" stop-color="#9a72f2"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="22"/></filter>
+    <pattern id="grid" width="72" height="72" patternUnits="userSpaceOnUse"><path d="M72 0H0v72" fill="none" stroke="#8bb2c9" stroke-opacity=".055" stroke-width="1"/></pattern>
+  </defs>
+  <path fill="url(#bg)" d="M0 0h1920v1080H0z"/><path fill="url(#grid)" d="M0 0h1920v1080H0z"/>
+  <circle cx="1120" cy="535" r="260" fill="none" stroke="#358cba" stroke-opacity=".16" stroke-width="90" filter="url(#glow)"/>
+  <circle cx="1120" cy="535" r="250" fill="none" stroke="url(#ring)" stroke-opacity=".52" stroke-width="3"/>
+  <circle cx="1120" cy="535" r="215" fill="none" stroke="#88e9da" stroke-opacity=".16" stroke-width="1" stroke-dasharray="4 15"/>
+  <path d="M915 650 1080 345l174 305-93-83-81 133-54-133z" fill="#101925" stroke="url(#ring)" stroke-width="5" stroke-linejoin="round"/>
+  <path d="m1054 525 51-92 61 111-56-32-37 64-19-40z" fill="#73e2c4" fill-opacity=".82"/>
+  <g fill="#c6d8e4" font-family="Segoe UI,Arial,sans-serif"><text x="116" y="834" font-size="22" letter-spacing="9" fill="#75e3c4">NEXUS SECURITY WORKSPACE</text><text x="112" y="900" font-size="54" font-weight="600" letter-spacing="2">NEXUS DESKTOPOS</text><text x="116" y="946" font-size="19" fill="#8da1b3">RED TEAM · PURPLE TEAM · PRIVACY · DEVELOPMENT</text></g>
+  <path d="M112 985h490" stroke="url(#ring)" stroke-width="2" opacity=".7"/>
+</svg>

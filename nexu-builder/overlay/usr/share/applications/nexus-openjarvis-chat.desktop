@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=OpenJarvis Chat
+Comment=Start the local OpenJarvis chat-only profile
+Exec=/usr/local/bin/nexus-openjarvis-chat
+Icon=utilities-terminal
+Terminal=true
+Categories=Utility;
